@@ -1,3 +1,9 @@
+/**************************************************
+      
+      by wb1 & saiboto 2020
+            
+************* Configuration **********************/
+
 #include <SoftwareSerial.h>
 #include <avr/pgmspace.h>
 #include <TinyLoRa.h>
