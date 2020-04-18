@@ -1,7 +1,7 @@
 /**************************************************
       
       by wb1 & saiboto 2020
-            
+      
 ************* Configuration **********************/
 
 #include <SoftwareSerial.h>
@@ -10,9 +10,9 @@
 #include <SPI.h>
 #include <string.h> 
 #include <Wire.h>
-#include <Adafruit_Sensor.h>
+//#include <Adafruit_Sensor.h>
 #include <TroykaDHT.h>  //russische Library
-DHT dht(4, DHT11);      //Port und DHT-Type 
+DHT dht(4, DHT22);      //Port und DHT-Type 
 float t = 0;
 float h;
 int16_t tempInt;
@@ -32,13 +32,13 @@ char myChar; // Definiere einen Char, um diesen zu bearbeiten
 uint16_t crcbyte = 0;
 
 // Network Session Key (MSB)
-uint8_t NwkSkey[16] = { 0x4D, 0x71, 0xD8, 0x90, 0xDA, 0xDD, 0x01, 0x80, 0xB6, 0x79, 0xF5, 0xAF, 0xA3, 0x3F, 0xB3, 0x01 };
+uint8_t NwkSkey[16] = { 0x17, 0x55, 0x85, 0xE0, 0x69, 0xE7, 0xE6, 0x8D, 0x29, 0x68, 0x1A, 0x34, 0xDA, 0x09, 0x8E, 0xE4 };
 
 // Application Session Key (MSB)
-uint8_t AppSkey[16] = { 0xD5, 0x21, 0x00, 0x2C, 0x1E, 0xA9, 0xB1, 0xD0, 0x82, 0x28, 0x16, 0xF4, 0x19, 0xCE, 0x75, 0x48 };
+uint8_t AppSkey[16] = { 0x7A, 0x82, 0xB5, 0xBC, 0xD2, 0x12, 0xEA, 0xCB, 0xA9, 0x5F, 0x16, 0x32, 0x2A, 0xA7, 0x34, 0x1A };
 
 // Device Address (MSB)
-uint8_t DevAddr[4] = { 0x26, 0x01, 0x15, 0x50 };
+uint8_t DevAddr[4] = { 0x26, 0x01, 0x16, 0x2D };
 /************************** Example Begins Here ***********************************/
 // Data Packet to Send to TTN
 unsigned char loraData[9]; // = {"hello LoRa"};
@@ -62,7 +62,7 @@ const PROGMEM uint16_t charSet[9][8] = {
                                           {  0x0600, 0x000, 0x0, 0x0, 0x0, 0x0, 0xFF, 0xFF00 }, //get current mode
                                           {  0x0700, 0x000, 0x0, 0x0, 0x0, 0x0, 0xFF, 0xFF00 }, //check firmware
                                           {  0x0801, 0x000, 0x0, 0x0, 0x0, 0x0, 0xFF, 0xFF00 }, //set working period continous                                         
-                                          {  0x0801, 0x100, 0x0, 0x0, 0x0, 0x0, 0xFF, 0xFF00 }, //set working period 1 Minute
+                                          {  0x0801, 0x300, 0x0, 0x0, 0x0, 0x0, 0xFF, 0xFF00 }, //set working period 1 Minute
                   // Beispiel zwei Miuten {  0x0801, 0x200, 0x0, 0x0, 0x0, 0x0, 0xFF, 0xFF00 }, // 2 Minuten                                                                                   
 // laut Datasheet www.inovafitness.com Modell SDS011, Firmware Version after 2015.7.20
 //5V TTL, 9600baud, 8N1, Datenpaket 19byte, 
@@ -70,7 +70,7 @@ const PROGMEM uint16_t charSet[9][8] = {
 
 //*********************** Programbeginn
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   Seriell1.begin(9600);
     while (!Serial);  // Warte, bis der serielle Port verbunden ist 
   crcbyte = 0x0;
@@ -118,6 +118,7 @@ for (i=0; i<19; i++)
     Serial.println("Check your radio");
     while(true);
   }
+  pinMode( 4, INPUT_PULLUP); 
 
 Serial.println("Lora gestartet");
 
@@ -147,9 +148,9 @@ dht.read();
     case DHT_OK:
       // hole Werte vom DHT
          // Read temperature in Celsius
-     t = dht.getTemperatureC()/20;
+     t = dht.getTemperatureC();
    // Read humidity
-     h = dht.getHumidity()/20;
+     h = dht.getHumidity();
   // Umwanlung Messwerte in int (multipliziert mit 100 und gerundet)   
   tempInt = round(t * 100);
    humidInt = round(h * 100);
