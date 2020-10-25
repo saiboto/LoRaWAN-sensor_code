@@ -1,2 +1,2 @@
 # LoRaWAN-sensor_code
-Different code for sensors working with LoRaWAN and TTN
+Code and 3D print files for various LoRaWAN sensors
